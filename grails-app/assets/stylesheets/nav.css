@@ -1,0 +1,44 @@
+#nav {
+    background-color: #FF1919;
+}
+
+.unordered-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+.list-item {
+    float: left;
+}
+
+.list-item a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+.list-item-right {
+    display: block;
+    color: white;
+    float: right;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.list-item-right a{
+    color: white;
+    text-decoration: none;
+}
+
+.list-item a:hover:not(.active) {
+    background-color: #111111;
+}
+
+.active {
+    background-color: #4CAF50;
+}

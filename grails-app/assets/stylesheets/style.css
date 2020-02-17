@@ -1,0 +1,19 @@
+html {
+    background-color: #BBBBBB;
+}
+
+#wrapper {
+    background-color: white;
+    width: 70%;
+    height: 80%;
+    margin: 30px auto auto;
+    border: 2px solid #999999;
+}
+
+#content {
+    padding: 1%;
+}
+
+.first-item {
+    border: 2px solid #999999;
+}
