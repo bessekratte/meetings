@@ -15,9 +15,10 @@ class User implements Serializable {
     String password
     boolean enabled = true
     boolean accountExpired
-    boolean accountLocked
+    boolean accountLocked = true
     boolean passwordExpired
-    static hasMany = [meetings: Meeting]
+//    static hasMany = [meetings: Meeting]
+//    Meeting meeting
 
     Set<Role> getAuthorities() {
         (UserRole.findAllByUser(this) as List<UserRole>)*.role as Set<Role>

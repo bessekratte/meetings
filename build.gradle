@@ -103,7 +103,6 @@ tasks.withType(Test) {
 springBoot {
     mainClassName = 'clovin.Application'
 }
-
 assets {
     minifyJs = true
     minifyCss = true

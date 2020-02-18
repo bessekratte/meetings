@@ -8,6 +8,7 @@ class MeetingController {
 
     final static int PAGE_SIZE = 3
     SpringSecurityService springSecurityService
+    MeetingService meetingService
 
     @Secured("permitAll")
     def upcoming(int offset) {
@@ -28,12 +29,13 @@ class MeetingController {
         User user = springSecurityService.getCurrentUser()
         meeting.participants.add(user)
         meeting.save flush: true
-        render(view: "upcoming", model: [user: springSecurityService.getCurrentUser()])
-        return
+        redirect(action: "upcoming", model: [user: springSecurityService.getCurrentUser()])
     }
 
     @Secured('ROLE_USER')
     def create() {
+        int ss = params.meetingId ? params.meetingId : 99
+        println ss + 'create'
         [user: springSecurityService.getCurrentUser()]
     }
 
@@ -57,22 +59,45 @@ class MeetingController {
             render(view: 'create', model: [alreadyMeetings: true, user: user])
             return
         }
-//        meeting.owner = user
+        meeting.owner = user
         meeting.save flush: true
-        render(view: "upcoming", model: [user: user])
-    }
-
-/*    @Secured('ROLE_USER')
-    def userMeetings() {
-        User user = springSecurityService.getCurrentUser()
-        def userMeetings = Meeting.findAllByOwner(user)
-        render(view: 'userMeetings', model: [meetings: userMeetings])
+        redirect(action: "upcoming", model: [user: user])
     }
 
     @Secured('ROLE_USER')
-    @Transactional
-    def editMeeting(int meetingId) {
-        def meeting = Meeting.get(meetingId)
+    def userMeetings() {
+        User user = springSecurityService.getCurrentUser()
+        def meetings =  Meeting.findAllByOwner(user)
+        render(view: 'userMeetings', model: [meetings: meetings, user: user])
+    }
 
-    }*/
+    @Secured('ROLE_USER')
+    def edit(Meeting meeting) {
+        println meeting
+        render(view: 'edit', model: [meeting: meeting, user: springSecurityService.getCurrentUser()])
+    }
+
+    @Transactional
+    @Secured('ROLE_USER')
+    def update(Meeting meeting) {
+        User user = springSecurityService.getCurrentUser()
+        if (meeting == null) {
+            render status: HttpStatus.NOT_FOUND, model: [user: user]
+            return
+        }
+        if (meeting.hasErrors()) {
+            render(view: 'edit', model: [meeting: meeting.errors, user: user])
+            return
+        }
+        def query = Meeting.where {
+            (((start <= meeting.start) && (end >= meeting.start)) || ((start <= meeting.end) && (end >= meeting.end)) ||
+                    ((start <= meeting.start) && (end >= meeting.end)) || ((start >= meeting.start) && (end <= meeting.end)))
+        }.list()
+        if (!query.isEmpty()) {
+            render(view: 'edit', model: [alreadyMeetings: true, user: user])
+            return
+        }
+        meeting.save flush: true
+        redirect(action: "upcoming", model: [user: user])
+    }
 }

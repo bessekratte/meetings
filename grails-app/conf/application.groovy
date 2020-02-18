@@ -2,10 +2,11 @@
 grails.plugin.springsecurity.userLookup.userDomainClassName = 'clovin.User'
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'clovin.UserRole'
 grails.plugin.springsecurity.authority.className = 'clovin.Role'
-grails.plugin.springsecurity.successHandler.defaultTargetUrl = '/meeting/upcoming'
+grails.plugin.springsecurity.successHandler.defaultTargetUrl = '/'
 grails.plugin.springsecurity.logout.postOnly = false
-grails.plugin.springsecurity.ui.register.postRegisterUrl = '/meeting/upcoming'
+grails.plugin.springsecurity.ui.register.postRegisterUrl = '/logout'
 grails.plugin.springsecurity.ui.register.requireEmailValidation = false
+grails.plugin.springsecurity.ui.register.defaultRoleNames = ['ROLE_USER']
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
         [pattern: '/', access: ['permitAll']],
         [pattern: '/error', access: ['permitAll']],
