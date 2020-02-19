@@ -1,9 +1,9 @@
 package clovin
 
-import grails.testing.web.controllers.ControllerUnitTest
+import grails.testing.services.ServiceUnitTest
 import spock.lang.Specification
 
-class HelloControllerSpec extends Specification implements ControllerUnitTest<HelloController> {
+class UserServiceSpec extends Specification implements ServiceUnitTest<UserService>{
 
     def setup() {
     }

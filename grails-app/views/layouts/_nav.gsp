@@ -8,7 +8,7 @@
             <li class="list-item"><a href="${createLink(controller: "meeting", action: 'userMeetings')}">User Meetings</a>
             <li class="list-item-right">logged as ${user.username}<br><g:link controller='logout'>Logout</g:link></li>
             <sec:ifAllGranted roles="ROLE_ADMIN">
-                <li class="list-item-right"><g:link controller='user' action="lockedUsers">Locked Users</g:link></li>
+                <li class="list-item-right"><g:link controller='user' action="users">Locked Users</g:link></li>
             </sec:ifAllGranted>
         </sec:ifLoggedIn>
         <sec:ifNotLoggedIn>
