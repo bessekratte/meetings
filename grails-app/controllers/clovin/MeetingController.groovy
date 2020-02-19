@@ -1,6 +1,5 @@
 package clovin
 
-import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.annotation.Secured
 
@@ -19,27 +18,23 @@ class MeetingController {
         def totalMatches = query.list().size()
         def actualPageNumber = offset / PAGE_SIZE + 1
         def allAvailablePages = totalMatches % PAGE_SIZE != 0 ? 1..(totalMatches / PAGE_SIZE + 1) : 1..(totalMatches / PAGE_SIZE)
-        render(view: "upcoming", model: [meetings: resultPage, offset: offset ?: 0, actualPage: actualPageNumber, pages: allAvailablePages, querySize: totalMatches, pageSize: PAGE_SIZE, user: springSecurityService.getCurrentUser()])
+        render(view: "upcoming", model: [meetings: resultPage, actualPage: actualPageNumber, pages: allAvailablePages, pageSize: PAGE_SIZE, user: springSecurityService.getCurrentUser()])
     }
 
     @Secured('ROLE_USER')
-    @Transactional
     def addUserToMeeting() {
         Meeting meeting = Meeting.get(params.id)
         User user = springSecurityService.getCurrentUser()
         meeting.participants.add(user)
-        meeting.save flush: true
+        meetingService.save(meeting)
         redirect(action: "upcoming", model: [user: springSecurityService.getCurrentUser()])
     }
 
     @Secured('ROLE_USER')
     def create() {
-        int ss = params.meetingId ? params.meetingId : 99
-        println ss + 'create'
         [user: springSecurityService.getCurrentUser()]
     }
 
-    @Transactional
     @Secured('ROLE_USER')
     def save(Meeting meeting) {
         User user = springSecurityService.getCurrentUser()
@@ -51,33 +46,27 @@ class MeetingController {
             render(view: 'create', model: [meeting: meeting.errors, user: user])
             return
         }
-        def query = Meeting.where {
-            (((start <= meeting.start) && (end >= meeting.start)) || ((start <= meeting.end) && (end >= meeting.end)) ||
-                    ((start <= meeting.start) && (end >= meeting.end)) || ((start >= meeting.start) && (end <= meeting.end)))
-        }.list()
-        if (!query.isEmpty()) {
+        if (!meetingService.isDateAvailable(meeting)) {
             render(view: 'create', model: [alreadyMeetings: true, user: user])
             return
         }
         meeting.owner = user
-        meeting.save flush: true
+        meetingService.save(meeting)
         redirect(action: "upcoming", model: [user: user])
     }
 
     @Secured('ROLE_USER')
     def userMeetings() {
         User user = springSecurityService.getCurrentUser()
-        def meetings =  Meeting.findAllByOwner(user)
+        def meetings = meetingService.getUserMeetings(user)
         render(view: 'userMeetings', model: [meetings: meetings, user: user])
     }
 
     @Secured('ROLE_USER')
     def edit(Meeting meeting) {
-        println meeting
         render(view: 'edit', model: [meeting: meeting, user: springSecurityService.getCurrentUser()])
     }
 
-    @Transactional
     @Secured('ROLE_USER')
     def update(Meeting meeting) {
         User user = springSecurityService.getCurrentUser()
@@ -89,15 +78,17 @@ class MeetingController {
             render(view: 'edit', model: [meeting: meeting.errors, user: user])
             return
         }
-        def query = Meeting.where {
-            (((start <= meeting.start) && (end >= meeting.start)) || ((start <= meeting.end) && (end >= meeting.end)) ||
-                    ((start <= meeting.start) && (end >= meeting.end)) || ((start >= meeting.start) && (end <= meeting.end)))
-        }.list()
-        if (!query.isEmpty()) {
-            render(view: 'edit', model: [alreadyMeetings: true, user: user])
+        if (!meetingService.isDateAvailable(meeting)) {
+            render(view: 'create', model: [alreadyMeetings: true, user: user])
             return
         }
-        meeting.save flush: true
+        meetingService.save(meeting)
         redirect(action: "upcoming", model: [user: user])
+    }
+
+    @Secured('ROLE_USER')
+    def delete(Meeting meeting) {
+        meetingService.delete(meeting)
+        redirect(action: 'userMeetings')
     }
 }

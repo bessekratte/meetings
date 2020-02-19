@@ -12,10 +12,18 @@
         <g:each in="${meetings}">
             <table>
                 <tr>
-                    <g:link controller="meeting" action="edit"
-                            resource="${it}">
-                        <button>Edit</button>
-                    </g:link>
+                    <td>
+                        <g:link controller="meeting" action="edit"
+                                resource="${it}">
+                            <button>Edit</button>
+                        </g:link>
+                    </td>
+                    <td>
+                        <g:link controller="meeting" action="delete"
+                                resource="${it}">
+                            <button>Delete</button>
+                        </g:link>
+                    </td>
                 </tr>
                 <tr>
                     <td>Subject:</td>

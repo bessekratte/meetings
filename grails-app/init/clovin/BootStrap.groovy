@@ -49,6 +49,9 @@ class BootStrap {
         Meeting meeting5 = new Meeting(subject: "123456",
                 start: Date.from(LocalDateTime.of(2020, 3, 3, 22, 0).atZone(ZoneId.systemDefault()).toInstant()),
                 end: Date.from(LocalDateTime.of(2020, 3, 3, 23, 0).atZone(ZoneId.systemDefault()).toInstant()), owner: testUser).save()
+        Meeting meeting6 = new Meeting(subject: "past",
+                start: Date.from(LocalDateTime.of(2020, 2, 3, 22, 0).atZone(ZoneId.systemDefault()).toInstant()),
+                end: Date.from(LocalDateTime.of(2020, 2, 3, 23, 0).atZone(ZoneId.systemDefault()).toInstant()), owner: testUser).save()
 
     }
     def destroy = {
